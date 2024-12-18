@@ -1,0 +1,8 @@
+services:
+  - name: "TestService"
+    url: "http://localhost:8081"
+    essential: false
+    insightUri: "/api"
+routes:
+  - from: "TestService"
+    to: "TestService"
