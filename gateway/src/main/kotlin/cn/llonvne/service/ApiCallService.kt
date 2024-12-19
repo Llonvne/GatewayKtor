@@ -22,34 +22,35 @@ import io.ktor.server.response.respondBytes
 import kotlinx.serialization.json.Json
 
 class ApiCallService(
-    private val httpClient: HttpClient = HttpClient(CIO) {
-        install(ContentNegotiation) {
-            json(Json)
-        }
-    }
+    private val httpClient: HttpClient =
+        HttpClient(CIO) {
+            install(ContentNegotiation) {
+                json(Json)
+            }
+        },
 ) : GatewayService {
     override val name: String = "ApiCallService"
 
-    override suspend fun collect(gatewayEvent: GatewayEvent) = process<ApiCallEvent>(gatewayEvent) { e ->
-        val apiDescriptor = e.context.apiDescriptor
+    override suspend fun collect(gatewayEvent: GatewayEvent) =
+        process<ApiCallEvent>(gatewayEvent) { e ->
+            val apiDescriptor = e.context.apiDescriptor
 
-        e.routingContext.call.attributes.put(Constants.AttributeKeys.remoteServiceAttributeKey, e.context)
+            e.routingContext.call.attributes
+                .put(Constants.AttributeKeys.remoteServiceAttributeKey, e.context)
 
-        val resp = requestTo(e.context)
+            val resp = requestTo(e.context)
 
-        e.routingContext.call.respondBytes(
-            status = resp.status,
-            contentType = ContentType.parse(apiDescriptor.contentType)
-        ) {
-            resp.bodyAsBytes()
+            e.routingContext.call.respondBytes(
+                status = resp.status,
+                contentType = ContentType.parse(apiDescriptor.contentType),
+            ) {
+                resp.bodyAsBytes()
+            }
+
+            e.ok()
         }
 
-        e.ok()
-    }
-
-    suspend fun requestTo(
-        context: RemoteServiceContext,
-    ): HttpResponse {
+    suspend fun requestTo(context: RemoteServiceContext): HttpResponse {
         val yamlConfig = context.config
         val service = context.insight
         val api = context.apiDescriptor
@@ -62,7 +63,6 @@ class ApiCallService(
             contentType(ContentType.parse(api.contentType))
         }
     }
-
 
     companion object {
         fun HttpMethod.toHttpMethod(): io.ktor.http.HttpMethod =

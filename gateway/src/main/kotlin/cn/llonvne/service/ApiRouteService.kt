@@ -10,35 +10,34 @@ import cn.llonvne.service.type.RemoteServiceContext
 import io.ktor.server.routing.route
 
 class ApiRouteService(
-    val emitter: Emitter<ApiCallEvent>
+    val emitter: Emitter<ApiCallEvent>,
 ) : GatewayService {
     override val name: String = "ApiRouteService"
 
     override val isRemote: Boolean = false
 
-    override suspend fun collect(gatewayEvent: GatewayEvent) = process<ServiceInstalledEvent>(gatewayEvent) {
-        if (it.service !is RemoteService) {
-            return@process
-        }
+    override suspend fun collect(gatewayEvent: GatewayEvent) =
+        process<ServiceInstalledEvent>(gatewayEvent) {
+            if (it.service !is RemoteService) {
+                return@process
+            }
 
-        val insight = it.service.insight
-        val config = it.service.config
+            val insight = it.service.insight
+            val config = it.service.config
 
-        it.route.route(insight.namespace) {
-            insight.apis.forEach { apiDescriptor ->
+            it.route.route(insight.namespace) {
+                insight.apis.forEach { apiDescriptor ->
 
-                val context = RemoteServiceContext(apiDescriptor, insight, config)
+                    val context = RemoteServiceContext(apiDescriptor, insight, config)
 
-                route(apiDescriptor.remoteUri, apiDescriptor.method.toHttpMethod()) {
-                    handle {
-                        val sendEvent = ApiCallEvent(context, this)
-                        emitter.emit(sendEvent)
-                        sendEvent.wait()
+                    route(apiDescriptor.remoteUri, apiDescriptor.method.toHttpMethod()) {
+                        handle {
+                            val sendEvent = ApiCallEvent(context, this)
+                            emitter.emit(sendEvent)
+                            sendEvent.wait()
+                        }
                     }
                 }
             }
         }
-    }
-
-
 }

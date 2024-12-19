@@ -20,27 +20,26 @@ interface Service {
 
     val order: ServiceOrder get() = normalServiceOrder
 
-    fun type(): String {
-        if (this is GatewayEssentialService) {
-            return "Essential"
+    fun type(): String =
+        when {
+            this is GatewayEssentialService -> "Essential"
+            this is GatewayService -> "GatewayService"
+            isRemote -> "Remote"
+            else -> "Local"
         }
-
-        return if (isRemote) {
-            return "Remote"
-        } else {
-            return "Local"
-        }
-    }
 
     suspend fun collect(e: ServiceEvent) {
-        if (e is ServiceEventAction) {
-            when (e) {
-                is AllServiceAction -> e.action(this)
-                is ServiceAction -> {
-                    if (e.serviceId.name == name) {
-                        e.action(this)
-                    }
-                }
+        if (e !is ServiceEventAction) return
+
+        executeActionIfApplicable(e)
+    }
+
+    private suspend fun executeActionIfApplicable(event: ServiceEventAction) {
+        when (event) {
+            is AllServiceAction -> event.action(this)
+            is ServiceAction -> {
+                if (event.serviceId.name != name) return
+                event.action(this)
             }
         }
     }
@@ -65,7 +64,27 @@ interface Service {
  * @see TargetEvent 进一步的目标检查
  * @see GatewayEvent 事件类型的基类
  */
-inline fun <reified E : GatewayEvent> Service.process(e: GatewayEvent, processor: (E) -> Unit) {
+inline fun <reified E : GatewayEvent> Service.process(
+    e: GatewayEvent,
+    processor: (E) -> Unit,
+) {
+    if (e !is E) {
+        return
+    }
+
+    if (e::class.isSubclassOf(TargetEvent::class)) {
+        e as TargetEvent<*>
+        if (!e.isTarget(this)) {
+            return
+        }
+    }
+    processor(e)
+}
+
+inline fun <reified E : ServiceEvent> Service.process(
+    e: ServiceEvent,
+    processor: (E) -> Unit,
+) {
     if (e !is E) {
         return
     }

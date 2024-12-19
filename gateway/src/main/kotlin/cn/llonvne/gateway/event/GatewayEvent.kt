@@ -8,8 +8,3 @@ sealed interface GatewayEvent
 sealed interface EmitterAware<E : GatewayEvent> {
     fun emit(e: E)
 }
-
-
-
-
-

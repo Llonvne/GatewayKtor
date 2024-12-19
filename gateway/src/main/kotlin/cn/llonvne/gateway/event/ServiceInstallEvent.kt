@@ -17,4 +17,3 @@ import cn.llonvne.service.Service
 interface ServiceInstallEvent : GatewayServiceEvent {
     val services: List<Service>
 }
-

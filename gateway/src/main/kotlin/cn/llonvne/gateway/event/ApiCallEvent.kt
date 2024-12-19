@@ -25,6 +25,7 @@ data class ApiCallEvent(
     val routingContext: RoutingContext,
 ) : GatewayServiceEvent {
     val channel: Channel<Unit> = Channel<Unit>()
+
     suspend fun wait() {
         channel.receive()
     }

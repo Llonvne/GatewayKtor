@@ -12,6 +12,8 @@ class GatewayEventsCentral(
 
     private val serviceEventFlow = MutableSharedFlow<ServiceEvent>()
 
+    private val apiEventFlow = MutableSharedFlow<ApiEvent>()
+
     fun emit(event: GatewayEvent) {
         scope.launch { gatewayEventFlow.emit(event) }
     }
@@ -28,5 +30,14 @@ class GatewayEventsCentral(
     @JvmName("collectServiceEvent")
     fun collect(collector: FlowCollector<ServiceEvent>) {
         scope.launch { serviceEventFlow.collect(collector) }
+    }
+
+    fun emit(event: ApiEvent) {
+        scope.launch { apiEventFlow.emit(event) }
+    }
+
+    @JvmName("collectApiEvent")
+    fun collect(collector: FlowCollector<ApiEvent>) {
+        scope.launch { apiEventFlow.collect(collector) }
     }
 }

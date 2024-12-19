@@ -18,5 +18,5 @@ import io.ktor.server.routing.Route
  */
 data class ServiceInstalledEvent(
     val service: Service,
-    val route: Route
+    val route: Route,
 ) : GatewayServiceEvent

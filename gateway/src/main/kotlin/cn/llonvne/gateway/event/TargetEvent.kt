@@ -7,7 +7,5 @@ import kotlin.reflect.full.isSubclassOf
 interface TargetEvent<T : Service> {
     val target: KClass<T>
 
-    fun isTarget(service: Service): Boolean {
-        return service::class.isSubclassOf(target)
-    }
+    fun isTarget(service: Service): Boolean = service::class.isSubclassOf(target)
 }
