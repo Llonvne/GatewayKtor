@@ -32,7 +32,7 @@ interface Service {
         }
     }
 
-    fun collect(e: ServiceEvent) {
+    suspend fun collect(e: ServiceEvent) {
         if (e is ServiceEventAction) {
             when (e) {
                 is AllServiceAction -> e.action(this)

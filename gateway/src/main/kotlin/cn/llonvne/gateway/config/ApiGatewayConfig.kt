@@ -2,6 +2,7 @@ package cn.llonvne.gateway.config
 
 import cn.llonvne.gateway.event.GatewayEventsCentral
 import cn.llonvne.service.ApiCallService
+import cn.llonvne.service.ApiDescriptorService
 import cn.llonvne.service.ApiInsightService
 import cn.llonvne.service.ApiRouteService
 import cn.llonvne.service.BootUpService
@@ -17,7 +18,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
-import net.mamoe.yamlkt.Yaml
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 
@@ -55,28 +55,19 @@ class ApiGatewayConfig {
     var serviceYamlConfigAttributeKey = AttributeKey<GatewayServiceYamlConfig>("serviceConfigKey")
 
 
-
     // BASE SERVICES
     val baseServices: MutableList<GatewayService> =
         mutableListOf(
             ApiRouteService { eventsCentral.emit(it) },
             ApiInsightService(apiInsightHttpClient, serviceYamlConfigAttributeKey) { eventsCentral.emit(it) },
             BootUpService(),
-            ApiCallService()
+            ApiCallService(),
+            ApiDescriptorService { eventsCentral.emit(it) }
         )
 
-    // YAML CONFIG
-    var configFilename = "gateway.yaml"
+    // CONFIG
+    var configGetter: GatewayConfigGetter = GatewayConfigYamlGetter("gateway.yaml")
 
-    var readConfigFromYaml: () -> GatewayYamlConfig = {
-        Yaml.decodeFromString(
-            GatewayYamlConfig.serializer(),
-            this.javaClass.classLoader
-                .getResourceAsStream(configFilename)
-                ?.bufferedReader(Charsets.UTF_8)
-                ?.readText()!!,
-        )
-    }
 
     // LOGGING
     var level = Level.INFO

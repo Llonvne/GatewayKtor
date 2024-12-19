@@ -39,7 +39,9 @@ class ServiceInstaller(
     private fun installGatewayService(gatewayService: GatewayService): Route {
         val route = root.route(config.gateWayServiceApiRoot, gatewayService.route())
 
-        config.eventsCentral.collect(gatewayService::collect)
+        config.eventsCentral.collect { it: GatewayEvent ->
+            gatewayService.collect(it)
+        }
 
         logger.info("GatewayService[${gatewayService.type()}] ${gatewayService.name} has established!")
 

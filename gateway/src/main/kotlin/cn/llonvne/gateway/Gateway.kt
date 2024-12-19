@@ -18,7 +18,7 @@ val ApiGateway =
 
         serviceInstaller.installServices(config.baseServices + config.services)
 
-        config.eventsCentral.emit(GatewayConfigAware(config.readConfigFromYaml()))
+        config.eventsCentral.emit(GatewayConfigAware(config.configGetter.get()))
 
         configureCallLoggingForGateway(config)
     }

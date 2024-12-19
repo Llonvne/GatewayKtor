@@ -13,18 +13,14 @@ open class ServiceAction(
     val action: (Service) -> Unit,
 ) : ServiceEventAction
 
-class AllServiceAction(
-    val action: (Service) -> Unit,
+open class AllServiceAction(
+    val action: suspend (Service) -> Unit,
 ) : ServiceEventAction
 
-class RemoteServiceInsightAction(
-    serviceId: ServiceId,
-    action: (RemoteService) -> Unit,
-) : ServiceAction(
-        serviceId,
-        {
-            if (it is RemoteService && it.name == serviceId.name) {
-                action(it)
-            }
-        },
-    )
+class RemoteServiceAction(
+    action: suspend (RemoteService) -> Unit,
+) : AllServiceAction({
+    if (it is RemoteService) {
+        action(it)
+    }
+})
