@@ -25,6 +25,7 @@ class RemoteServiceAction(
     }
 })
 
+class WebSocketListening : ServiceEvent
 
 /**
  * 订阅API事件类。
@@ -45,4 +46,4 @@ class RemoteServiceAction(
  *
  * 注意：该类是一个事件的包装器，用于注册处理函数，并自身作为一个事件可被GatewayEventsCentral发布和订阅。
  */
-class SubscribeApiEvent(val handler: (ApiEvent) -> Unit) : ServiceEvent
+class SubscribeApiEvent(val handler: suspend (ApiEvent) -> Unit) : ServiceEvent

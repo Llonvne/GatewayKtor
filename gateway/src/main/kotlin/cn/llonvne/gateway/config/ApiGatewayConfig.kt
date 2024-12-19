@@ -3,6 +3,7 @@ package cn.llonvne.gateway.config
 import cn.llonvne.gateway.ApiWebSocketPacket
 import cn.llonvne.gateway.Ping
 import cn.llonvne.gateway.event.GatewayEventsCentral
+import cn.llonvne.service.AliveDetectService
 import cn.llonvne.service.ApiCallService
 import cn.llonvne.service.ApiDescriptorService
 import cn.llonvne.service.ApiInsightService
@@ -41,43 +42,50 @@ class ApiGatewayConfig {
     var gateWayServiceApiRoot = "/gateway"
 
     // API INSIGHT HTTP CLIENT
-    var apiInsightHttpClient =
-        HttpClient(CIO) {
-            install(ContentNegotiation) {
-                this.json(Json)
-            }
-            install(HttpRequestRetry) {
-                retryOnException(maxRetries = 3)
-                exponentialDelay()
+    var apiInsightHttpClient = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            this.json(Json)
+        }
+        install(HttpRequestRetry) {
+            retryOnException(maxRetries = 3)
+            exponentialDelay()
 
-                modifyRequest {
-                    val req = it
-                    val context = req.attributes.getOrNull(serviceYamlConfigAttributeKey) ?: return@modifyRequest
-                    LoggerFactory.getLogger(this@modifyRequest::class.java).warn(
-                        "Unable to fetch insight for the service '${context.name}' from '${context.url + context.insightUri}'. " +
-                                "Reason: ${this.cause?.localizedMessage}. A retry will be attempted shortly.",
-                    )
-                }
+            modifyRequest {
+                val req = it
+                val context = req.attributes.getOrNull(serviceYamlConfigAttributeKey) ?: return@modifyRequest
+                LoggerFactory.getLogger(this@modifyRequest::class.java).warn(
+                    "Unable to fetch insight for the service '${context.name}' from '${context.url + context.insightUri}'. " + "Reason: ${this.cause?.localizedMessage}. A retry will be attempted shortly.",
+                )
             }
         }
+    }
 
     // API INSIGHT CONFIG ATTRIBUTE KEY
     var serviceYamlConfigAttributeKey = AttributeKey<GatewayServiceYamlConfig>("serviceConfigKey")
 
     // BASE SERVICES
-    val baseServices: MutableList<GatewayService> =
-        mutableListOf(
-            ApiRouteService { eventsCentral.emit(it) },
-            ApiInsightService(apiInsightHttpClient, serviceYamlConfigAttributeKey) { eventsCentral.emit(it) },
-            BootUpService { handler ->
-                eventsCentral.collect(handler)
-            },
-            ApiCallService(),
-            ApiDescriptorService { eventsCentral.emit(it) },
-            ApiWebsocketService {
-                eventsCentral.emit(it)
-            },
-        )
+    val baseServices: MutableList<GatewayService> = mutableListOf(
+        ApiRouteService { eventsCentral.emit(it) },
+        ApiInsightService(apiInsightHttpClient, serviceYamlConfigAttributeKey) { eventsCentral.emit(it) },
+        BootUpService { handler ->
+            eventsCentral.collect(handler)
+        },
+        ApiCallService(),
+        ApiDescriptorService { eventsCentral.emit(it) },
+        ApiWebsocketService({
+            eventsCentral.emit(it)
+        }, {
+            eventsCentral.emit(it)
+        }),
+        AliveDetectService(
+            httpClient = HttpClient(CIO) {
+                install(ContentNegotiation) {
+                    json(Json)
+                }
+            }
+        ) {
+            eventsCentral.emit(it)
+        })
 
     // CONFIG
     var configGetter: GatewayConfigGetter = GatewayConfigYamlGetter("gateway.yaml")

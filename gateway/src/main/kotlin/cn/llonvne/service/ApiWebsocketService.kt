@@ -3,6 +3,7 @@ package cn.llonvne.service
 import cn.llonvne.gateway.ApiWebSocketPacket
 import cn.llonvne.gateway.event.GatewayEvent
 import cn.llonvne.gateway.event.WebSocketInstalled
+import cn.llonvne.gateway.event.WebSocketListening
 import cn.llonvne.gateway.event.WebsocketApiEvent
 import cn.llonvne.gateway.type.Emitter
 import io.ktor.server.websocket.converter
@@ -13,6 +14,7 @@ import io.ktor.websocket.Frame
 
 class ApiWebsocketService(
     val emitter: Emitter<WebsocketApiEvent>,
+    val serviceEmitter: Emitter<WebSocketListening>
 ) : GatewayService {
     override val name: String = "ApiWebsocketService"
 
@@ -39,5 +41,7 @@ class ApiWebsocketService(
                     }
                 }
             }
+
+            serviceEmitter.emit(WebSocketListening())
         }
 }
