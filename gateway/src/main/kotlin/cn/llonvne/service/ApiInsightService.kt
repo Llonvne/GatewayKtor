@@ -7,6 +7,7 @@ import cn.llonvne.gateway.event.GatewayConfigAware
 import cn.llonvne.gateway.event.GatewayEvent
 import cn.llonvne.gateway.event.RemoteServiceAware
 import cn.llonvne.gateway.type.Emitter
+import cn.llonvne.service.abc.GatewayService
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get

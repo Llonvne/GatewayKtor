@@ -6,6 +6,7 @@ import cn.llonvne.gateway.event.GatewayEvent
 import cn.llonvne.gateway.event.ServiceInstalledEvent
 import cn.llonvne.gateway.type.Emitter
 import cn.llonvne.service.ApiCallService.Companion.toHttpMethod
+import cn.llonvne.service.abc.GatewayService
 import cn.llonvne.service.type.RemoteServiceContext
 import io.ktor.server.routing.route
 

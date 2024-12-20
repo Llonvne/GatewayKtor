@@ -1,11 +1,11 @@
-package cn.llonvne.service
+package cn.llonvne.service.abc
 
 import cn.llonvne.gateway.Constants
 import cn.llonvne.gateway.event.GatewayEvent
 import cn.llonvne.gateway.type.ServiceOrder
 import io.ktor.server.routing.Route
 
-sealed interface GatewayService : Service {
+interface GatewayService : Service {
     /**
      * 允许 GatewayService 处理 GatewayEvent。
      *

@@ -1,7 +1,7 @@
 package cn.llonvne.gateway.event
 
 import cn.llonvne.gateway.RemoteService
-import cn.llonvne.service.Service
+import cn.llonvne.service.abc.Service
 
 /**
  * 表示一组 [RemoteService] 已经由 [cn.llonvne.service.ApiInsightService] 准备好以发送到 [cn.llonvne.gateway.ServiceInstaller] 来安装.

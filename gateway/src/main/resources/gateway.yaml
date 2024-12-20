@@ -6,3 +6,11 @@ services:
 routes:
   - from: "TestService"
     to: "TestService"
+persistence:
+  redis:
+    url: "localhost:6379"
+  db:
+    url: "localhost:5432"
+    username: admin
+    password: admin
+    type: PostgreSql

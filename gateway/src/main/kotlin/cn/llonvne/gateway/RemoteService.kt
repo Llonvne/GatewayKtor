@@ -1,7 +1,7 @@
 package cn.llonvne.gateway
 
 import cn.llonvne.gateway.config.GatewayServiceYamlConfig
-import cn.llonvne.service.Service
+import cn.llonvne.service.abc.Service
 import io.ktor.server.routing.Route
 
 /**

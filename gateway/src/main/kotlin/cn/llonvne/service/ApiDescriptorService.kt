@@ -2,8 +2,8 @@ package cn.llonvne.service
 
 import cn.llonvne.gateway.event.RemoteServiceAction
 import cn.llonvne.gateway.type.Emitter
+import cn.llonvne.service.abc.GatewayService
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.get
 
 class ApiDescriptorService(
     val emitter: Emitter<RemoteServiceAction>,

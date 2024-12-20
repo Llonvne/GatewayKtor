@@ -5,6 +5,5 @@ import cn.llonvne.gateway.ApiWebSocketPacket
 sealed interface ApiEvent
 
 class WebsocketApiEvent(
-    val packet: ApiWebSocketPacket
+    val packet: ApiWebSocketPacket,
 ) : ApiEvent
-

@@ -11,6 +11,8 @@ object Constants {
         val gatewayServiceOrder = ServiceOrder(0)
 
         val essentialServiceOrder = ServiceOrder(-100)
+
+        val persistenceServiceOrder = ServiceOrder(-50)
     }
 
     object AttributeKeys {

@@ -8,6 +8,7 @@ import cn.llonvne.gateway.HttpMethod.PATCH
 import cn.llonvne.gateway.HttpMethod.POST
 import cn.llonvne.gateway.event.ApiCallEvent
 import cn.llonvne.gateway.event.GatewayEvent
+import cn.llonvne.service.abc.GatewayService
 import cn.llonvne.service.type.RemoteServiceContext
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO

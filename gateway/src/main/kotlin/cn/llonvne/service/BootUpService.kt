@@ -4,6 +4,7 @@ import cn.llonvne.gateway.event.ApiEvent
 import cn.llonvne.gateway.event.ServiceEvent
 import cn.llonvne.gateway.event.SubscribeApiEvent
 import cn.llonvne.gateway.type.EventSubscriber
+import cn.llonvne.service.abc.GatewayService
 
 class BootUpService(
     val subscribe: EventSubscriber<ApiEvent>,

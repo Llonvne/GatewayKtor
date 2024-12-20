@@ -2,7 +2,7 @@ package cn.llonvne.gateway.event
 
 import cn.llonvne.gateway.RemoteService
 import cn.llonvne.gateway.type.ServiceId
-import cn.llonvne.service.Service
+import cn.llonvne.service.abc.Service
 
 interface ServiceEvent
 
@@ -46,4 +46,8 @@ class WebSocketListening : ServiceEvent
  *
  * 注意：该类是一个事件的包装器，用于注册处理函数，并自身作为一个事件可被GatewayEventsCentral发布和订阅。
  */
-class SubscribeApiEvent(val handler: suspend (ApiEvent) -> Unit) : ServiceEvent
+class SubscribeApiEvent(
+    val handler: suspend (ApiEvent) -> Unit,
+) : ServiceEvent
+
+class IsServiceAlive(val serviceId: ServiceId) : ServiceEvent

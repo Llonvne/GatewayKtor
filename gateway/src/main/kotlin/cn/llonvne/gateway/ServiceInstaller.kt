@@ -4,9 +4,9 @@ import cn.llonvne.gateway.config.ApiGatewayConfig
 import cn.llonvne.gateway.event.GatewayEvent
 import cn.llonvne.gateway.event.ServiceInstallEvent
 import cn.llonvne.gateway.event.ServiceInstalledEvent
-import cn.llonvne.service.GatewayEssentialService
-import cn.llonvne.service.GatewayService
-import cn.llonvne.service.Service
+import cn.llonvne.service.abc.GatewayEssentialService
+import cn.llonvne.service.abc.GatewayService
+import cn.llonvne.service.abc.Service
 import cn.llonvne.service.process
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.RoutingRoot
@@ -15,6 +15,14 @@ import io.ktor.server.routing.route
 import kotlinx.coroutines.flow.FlowCollector
 import org.slf4j.LoggerFactory
 
+/**
+ * ServiceInstaller 类负责安装和配置服务到 API 网关中。它根据服务类型（网关服务、远程服务或普通服务），
+ * 采用不同的安装策略，确保服务能够正确接入并响应请求。该类是 GatewayEssentialService 的实现。
+ *
+ * @property config ApiGatewayConfig 即 API 网关的配置信息，用于获取路由根、事件中心等配置项。
+ * @property root RoutingRoot 路由根对象，用于在其中添加或配置服务路由。
+ *
+ */
 class ServiceInstaller(
     val config: ApiGatewayConfig,
     val root: RoutingRoot,

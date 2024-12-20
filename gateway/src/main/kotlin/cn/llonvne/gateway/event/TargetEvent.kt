@@ -1,6 +1,6 @@
 package cn.llonvne.gateway.event
 
-import cn.llonvne.service.Service
+import cn.llonvne.service.abc.Service
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 

@@ -1,6 +1,6 @@
 package cn.llonvne.gateway.event
 
-import cn.llonvne.service.Service
+import cn.llonvne.service.abc.Service
 
 /**
  * 表示事件内部的 [services] 需要被 [cn.llonvne.gateway.ServiceInstaller] 处理并添加至服务列表
