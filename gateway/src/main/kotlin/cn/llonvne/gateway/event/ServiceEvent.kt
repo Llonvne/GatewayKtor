@@ -20,10 +20,10 @@ open class AllServiceAction(
 class RemoteServiceAction(
     action: suspend (RemoteService) -> Unit,
 ) : AllServiceAction({
-    if (it is RemoteService) {
-        action(it)
-    }
-})
+        if (it is RemoteService) {
+            action(it)
+        }
+    })
 
 class WebSocketListening : ServiceEvent
 
@@ -50,4 +50,6 @@ class SubscribeApiEvent(
     val handler: suspend (ApiEvent) -> Unit,
 ) : ServiceEvent
 
-class IsServiceAlive(val serviceId: ServiceId) : ServiceEvent
+class IsServiceAlive(
+    val serviceId: ServiceId,
+) : ServiceEvent

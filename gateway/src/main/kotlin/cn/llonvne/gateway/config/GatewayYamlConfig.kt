@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class GatewayYamlConfig(
     val services: List<GatewayServiceYamlConfig> = emptyList(),
     val routes: List<ApiRouteConfig> = emptyList(),
-    val persistence: GatewayPersistentConfig
+    val persistence: GatewayPersistentConfig,
 )
 
 @Serializable
@@ -25,22 +25,21 @@ data class ApiRouteConfig(
     val to: String,
 )
 
-
 @Serializable
 data class GatewayPersistentConfig(
     val redis: GatewayRedisConfig,
-    val db: GatewayDbConfig
+    val db: GatewayDbConfig,
 )
 
 @Serializable
 data class GatewayRedisConfig(
     val url: String,
     val username: String? = null,
-    val password: String? = null
+    val password: String? = null,
 )
 
 enum class GatewaySupportDbType {
-    PostgreSql
+    PostgreSql,
 }
 
 @Serializable
@@ -48,6 +47,5 @@ data class GatewayDbConfig(
     val type: GatewaySupportDbType,
     val url: String,
     val username: String,
-    val password: String
+    val password: String,
 )
-

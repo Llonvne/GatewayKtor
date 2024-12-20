@@ -10,7 +10,7 @@ persistence:
   redis:
     url: "localhost:6379"
   db:
-    url: "localhost:5432"
+    url: "postgresql://localhost:5432/gateway"
     username: admin
     password: admin
     type: PostgreSql

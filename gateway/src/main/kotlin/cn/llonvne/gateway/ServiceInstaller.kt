@@ -82,6 +82,6 @@ class ServiceInstaller(
     }
 
     fun installServices(services: List<Service>) {
-        services.forEach { installService(it) }
+        services.sortedBy { it.order }.forEach { installService(it) }
     }
 }

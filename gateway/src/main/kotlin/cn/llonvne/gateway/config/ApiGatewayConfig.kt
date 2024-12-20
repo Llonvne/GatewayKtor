@@ -102,7 +102,7 @@ class ApiGatewayConfig {
      *
      * 这些服务通过[eventsCentral]中心进行事件的发布与订阅，以协调和响应系统中的各种情况。
      */
-    val baseServices: MutableList<GatewayService> =
+    val baseServices =
         mutableListOf(
             ApiRouteService { eventsCentral.emit(it) },
             ApiInsightService(apiInsightHttpClient, serviceYamlConfigAttributeKey) { eventsCentral.emit(it) },
@@ -116,9 +116,7 @@ class ApiGatewayConfig {
             }, {
                 eventsCentral.emit(it)
             }),
-            AliveDetectService {
-                eventsCentral.emit(it)
-            },
+            AliveDetectService(),
         )
 
     /**

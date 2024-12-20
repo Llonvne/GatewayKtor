@@ -22,10 +22,14 @@ import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.ktor.server.testing.testApplication
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import java.time.Duration
 import kotlin.test.Test
+import kotlin.time.toKotlinDuration
 
 @Serializable
 class Hello(
@@ -59,8 +63,20 @@ class ApplicationTest {
                     host = "localhost",
                     port = 8080,
                     path = "/websocket/api",
+                    request = {
+                        headers.append("service_name", "TestService")
+                    },
                 ) {
-                    this.sendSerialized(Ping() as ApiWebSocketPacket)
+                    launch {
+                        while (this@webSocket.isActive) {
+                            sendSerialized(Ping("TestService") as ApiWebSocketPacket)
+                            delay(Duration.ofSeconds(10).toKotlinDuration())
+                        }
+                    }
+
+                    for (frame in incoming) {
+                        println(frame)
+                    }
                 }
             }
 

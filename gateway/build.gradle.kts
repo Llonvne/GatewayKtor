@@ -30,10 +30,7 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
     implementation("io.github.flaxoos:ktor-server-rate-limiting:2.1.1")
-    implementation("io.github.flaxoos:ktor-server-task-scheduling-core:2.1.1")
-    implementation("io.github.flaxoos:ktor-server-task-scheduling-redis:2.1.1")
-    implementation("io.github.flaxoos:ktor-server-task-scheduling-mongodb:2.1.1")
-    implementation("io.github.flaxoos:ktor-server-task-scheduling-jdbc:2.1.1")
+
     implementation("io.ktor:ktor-server-netty-jvm")
     implementation("ch.qos.logback:logback-classic:1.4.14")
     implementation("io.ktor:ktor-server-config-yaml-jvm")

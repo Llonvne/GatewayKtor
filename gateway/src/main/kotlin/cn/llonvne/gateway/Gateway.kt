@@ -8,16 +8,17 @@ import io.ktor.server.application.install
 import io.ktor.server.routing.createRouteFromPath
 import io.ktor.server.routing.routing
 import io.ktor.server.websocket.WebSockets
+import kotlinx.coroutines.flow.FlowCollector
+import org.slf4j.LoggerFactory
 
 /**
  * 定义 [ApiGateway] 为 Ktor 的应用程序插件.
- *
- *
  */
 val ApiGateway =
     createApplicationPlugin("ApiGateway", ::ApiGatewayConfig) {
-
         val config = pluginConfig
+
+        val logger = LoggerFactory.getLogger("Gateway")
 
         val routingRoot = application.routing {}
 
