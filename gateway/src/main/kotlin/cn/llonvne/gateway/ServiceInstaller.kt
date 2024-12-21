@@ -1,7 +1,9 @@
 package cn.llonvne.gateway
 
 import cn.llonvne.gateway.config.ApiGatewayConfig
+import cn.llonvne.gateway.event.ApiEvent
 import cn.llonvne.gateway.event.GatewayEvent
+import cn.llonvne.gateway.event.ServiceEvent
 import cn.llonvne.gateway.event.ServiceInstallEvent
 import cn.llonvne.gateway.event.ServiceInstalledEvent
 import cn.llonvne.service.abc.GatewayEssentialService
@@ -53,6 +55,11 @@ class ServiceInstaller(
         config.eventsCentral.collect { it: GatewayEvent ->
             gatewayService.collect(it)
         }
+
+        gatewayService.gatewayEventEmitterAware {
+            config.eventsCentral.emit(it)
+        }
+
         return route
     }
 
@@ -68,6 +75,14 @@ class ServiceInstaller(
     }
 
     fun installService(service: Service) {
+        service.serviceEventEmitterAware { config.eventsCentral.emit(it) }
+
+        service.apiEventEmitterAware { config.eventsCentral.emit(it) }
+
+        config.eventsCentral.collect { it: ServiceEvent -> service.collect(it) }
+
+        config.eventsCentral.collect { it: ApiEvent -> service.collect(it) }
+
         val route =
             when (service) {
                 is GatewayService -> installGatewayService(service)
@@ -80,16 +95,6 @@ class ServiceInstaller(
     }
 
     fun installServices(services: List<Service>) {
-
-        services.forEach {
-            it.serviceEventEmitterAware {
-                config.eventsCentral.emit(it)
-            }
-            it.apiEventEmitterAware {
-                config.eventsCentral.emit(it)
-            }
-        }
-
         services.sortedBy { it.order }.forEach { installService(it) }
     }
 }

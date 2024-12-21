@@ -15,7 +15,6 @@ import cn.llonvne.gateway.type.Emitter
  * @see Emitter 事件发射器接口，用于向订阅者广播特定类型的事件。
  */
 abstract class ServiceBase : Service {
-
     protected lateinit var apiEventEmitter: Emitter<ApiEvent>
 
     protected lateinit var serviceEmitter: Emitter<ServiceEvent>

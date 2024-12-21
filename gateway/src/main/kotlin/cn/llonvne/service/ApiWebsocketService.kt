@@ -18,12 +18,12 @@ import io.ktor.websocket.Frame
 import io.ktor.websocket.close
 import org.slf4j.LoggerFactory
 
-class ApiWebsocketService() : GatewayServiceBase() {
+class ApiWebsocketService : GatewayServiceBase() {
     override val name: String = "ApiWebsocketService"
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    private val servicesNameSet = gatewayYamlConfig.services.map { it.name }.toSet()
+    private val servicesNameSet by lazy { gatewayYamlConfig.services.map { it.name }.toSet() }
 
     override suspend fun collectGateway(gatewayEvent: GatewayEvent) =
         process<WebSocketInstalled>(gatewayEvent) {

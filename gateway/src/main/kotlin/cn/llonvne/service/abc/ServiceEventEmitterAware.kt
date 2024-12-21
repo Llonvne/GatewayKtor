@@ -3,7 +3,6 @@ package cn.llonvne.service.abc
 import cn.llonvne.gateway.event.ServiceEvent
 import cn.llonvne.gateway.type.Emitter
 
-
 /**
  * 实现此接口以表明一个类可以感知并处理[ServiceEvent]事件。
  * 通过提供一个[Emitter]实例，可以使对象具备发射服务事件的能力，
@@ -18,7 +17,5 @@ import cn.llonvne.gateway.type.Emitter
  * @see ServiceEvent 服务事件的根接口，所有自定义服务事件应基于此接口。
  */
 interface ServiceEventEmitterAware {
-    fun serviceEventEmitterAware(
-        emitter: Emitter<ServiceEvent>
-    )
+    fun serviceEventEmitterAware(emitter: Emitter<ServiceEvent>)
 }

@@ -20,7 +20,9 @@ import cn.llonvne.service.process
  *   - `gatewayEventEmitter`: 用于发射 [GatewayEvent] 事件的发射器，由框架设置。
  *   - `gatewayYamlConfig`: 网关的 YAML 配置信息，通过事件处理自动填充。
  */
-abstract class GatewayServiceBase : ServiceBase(), GatewayService {
+abstract class GatewayServiceBase :
+    ServiceBase(),
+    GatewayService {
     protected lateinit var gatewayEventEmitter: Emitter<GatewayEvent>
 
     final override fun gatewayEventEmitterAware(emitter: Emitter<GatewayEvent>) {

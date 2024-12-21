@@ -18,7 +18,6 @@ class ApiInsightService : GatewayServiceBase() {
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override suspend fun collect(e: ApiEvent) {
-        super.collect(e)
         when (e) {
             is WebsocketApiEvent ->
                 when (e.packet) {
@@ -30,7 +29,6 @@ class ApiInsightService : GatewayServiceBase() {
         }
     }
 
-
     private suspend fun processWebsocketEstablishedEvent(event: WebsocketEstablishedEvent) {
         with(event.session) {
             if (!this.isActive) {
@@ -38,6 +36,7 @@ class ApiInsightService : GatewayServiceBase() {
                 return
             }
             sendPacket(ApiInsightRequest())
+            logger.info("sending ApiInsightRequest to ${event.service}")
         }
     }
 

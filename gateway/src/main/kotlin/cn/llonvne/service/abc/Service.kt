@@ -25,7 +25,9 @@ import io.ktor.server.routing.Route
  * @see ApiEventEmitterAware API事件感知能力。
  * @see ServiceOrder 服务启动顺序定义。
  */
-interface Service : ServiceEventEmitterAware, ApiEventEmitterAware {
+interface Service :
+    ServiceEventEmitterAware,
+    ApiEventEmitterAware {
     val name: String
 
     fun route(): Route.() -> Unit

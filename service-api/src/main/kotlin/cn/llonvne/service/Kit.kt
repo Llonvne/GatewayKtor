@@ -10,14 +10,16 @@ import cn.llonvne.gateway.ServiceInsight
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.plugins.websocket.converter
-import io.ktor.client.plugins.websocket.sendSerialized
 import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.reflect.typeInfo
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 
@@ -45,37 +47,59 @@ private class KitImpl(
 ) : Kit {
     private val logger = LoggerFactory.getLogger("Kit at $gatewayHost")
 
+    private val jsonPrinter = Json {
+        encodeDefaults = true
+        prettyPrint = true
+        prettyPrintIndent = "  "
+    }
+
+    private suspend fun DefaultClientWebSocketSession.processPacket(packet: ApiWebSocketPacket) {
+        when (packet) {
+            is ApiInsightRequest -> processApiInsightRequest(packet)
+            is Ping -> Unit
+            is ApiInsightResponse -> Unit
+        }
+    }
+
+    private suspend fun processApiInsightRequest(request: ApiInsightRequest): ApiWebSocketPacket {
+        logger.info("received ApiInsightRequest")
+
+        logger.info(
+            "send ${
+                jsonPrinter.encodeToString(serviceInsight)
+            }"
+        )
+
+        return ApiInsightResponse(
+            serviceInsight,
+        )
+    }
+
     suspend fun start() {
-        client.webSocket(
-            method = io.ktor.http.HttpMethod.Get,
-            host = "localhost",
-            port = 8080,
-            path = "/websocket/api",
-            request = {
-                headers.append("service_name", "TestService")
-            },
-        ) {
-            for (frame in incoming) {
-                val resp = converter?.deserialize(Charsets.UTF_8, typeInfo<ApiWebSocketPacket>(), frame)
+        while (true) {
+            try {
+                client.webSocket(
+                    method = io.ktor.http.HttpMethod.Get,
+                    host = "localhost",
+                    port = 8080,
+                    path = "/websocket/api",
+                    request = {
+                        headers.append("service_name", "TestService")
+                    },
+                ) {
+                    for (frame in incoming) {
+                        val resp = converter?.deserialize(Charsets.UTF_8, typeInfo<ApiWebSocketPacket>(), frame)
 
-                if (resp != null) {
-                    resp as ApiWebSocketPacket
+                        if (resp != null) {
+                            resp as ApiWebSocketPacket
 
-                    when (resp) {
-                        is ApiInsightRequest -> {
-                            logger.info("received ApiInsightRequest")
-
-                            sendSerialized(
-                                ApiInsightResponse(
-                                    serviceInsight,
-                                ) as ApiWebSocketPacket,
-                            )
+                            processPacket(resp)
                         }
-
-                        is Ping -> Unit
-                        is ApiInsightResponse -> Unit
                     }
                 }
+            } catch (e: Exception) {
+                logger.error("WebSocket connection failed or ended, attempting to reconnect in 5 seconds", e)
+                delay(5_000L) // Wait for 30 seconds before retrying
             }
         }
     }

@@ -20,10 +20,10 @@ open class AllServiceAction(
 class RemoteServiceAction(
     action: suspend (RemoteService) -> Unit,
 ) : AllServiceAction({
-    if (it is RemoteService) {
-        action(it)
-    }
-})
+        if (it is RemoteService) {
+            action(it)
+        }
+    })
 
 class WebSocketListening : ServiceEvent
 

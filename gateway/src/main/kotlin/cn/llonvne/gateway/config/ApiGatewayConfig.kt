@@ -76,7 +76,7 @@ class ApiGatewayConfig {
                     val context = req.attributes.getOrNull(serviceYamlConfigAttributeKey) ?: return@modifyRequest
                     LoggerFactory.getLogger(this@modifyRequest::class.java).warn(
                         "Unable to fetch insight for the service '${context.name}' from '${context.url + context.insightUri}'. " +
-                                "Reason: ${this.cause?.localizedMessage}. A retry will be attempted shortly.",
+                            "Reason: ${this.cause?.localizedMessage}. A retry will be attempted shortly.",
                     )
                 }
             }
@@ -104,7 +104,7 @@ class ApiGatewayConfig {
             ApiRouteService(),
             ApiInsightService(),
             ApiCallService(),
-            ApiWebsocketService()
+            ApiWebsocketService(),
         )
 
     /**

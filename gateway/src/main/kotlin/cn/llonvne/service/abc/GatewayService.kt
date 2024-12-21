@@ -6,7 +6,9 @@ import cn.llonvne.gateway.type.Emitter
 import cn.llonvne.gateway.type.ServiceOrder
 import io.ktor.server.routing.Route
 
-interface GatewayService : Service, GatewayEventEmitterAware {
+interface GatewayService :
+    Service,
+    GatewayEventEmitterAware {
     /**
      * 允许 GatewayService 处理 GatewayEvent。
      *
