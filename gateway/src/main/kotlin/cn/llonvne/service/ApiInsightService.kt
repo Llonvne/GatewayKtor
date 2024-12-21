@@ -3,56 +3,36 @@ package cn.llonvne.service
 import cn.llonvne.gateway.ApiInsightRequest
 import cn.llonvne.gateway.ApiInsightResponse
 import cn.llonvne.gateway.RemoteService
-import cn.llonvne.gateway.config.GatewayServiceYamlConfig
 import cn.llonvne.gateway.config.GatewayYamlConfig
+import cn.llonvne.gateway.event.ApiEvent
 import cn.llonvne.gateway.event.GatewayConfigAware
 import cn.llonvne.gateway.event.GatewayEvent
 import cn.llonvne.gateway.event.RemoteServiceAware
-import cn.llonvne.gateway.event.ServiceEvent
-import cn.llonvne.gateway.event.SubscribeApiEvent
-import cn.llonvne.gateway.event.WebSocketListening
 import cn.llonvne.gateway.event.WebsocketApiEvent
 import cn.llonvne.gateway.event.WebsocketEstablishedEvent
-import cn.llonvne.gateway.type.Emitter
-import cn.llonvne.service.abc.GatewayService
-import io.ktor.util.AttributeKey
+import cn.llonvne.service.abc.GatewayServiceBase
 import kotlinx.coroutines.isActive
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-class ApiInsightService(
-    private val emitter: Emitter<RemoteServiceAware>,
-    private val subscriber: Emitter<SubscribeApiEvent>,
-) : GatewayService {
+class ApiInsightService : GatewayServiceBase() {
     override val name: String = "ApiInsightService"
 
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
-    private lateinit var gatewayYamlConfig: GatewayYamlConfig
+    override suspend fun collect(e: ApiEvent) {
+        super.collect(e)
+        when (e) {
+            is WebsocketApiEvent ->
+                when (e.packet) {
+                    is ApiInsightResponse -> processApiInsightResponse(e.packet)
+                    else -> Unit
+                }
 
-    override suspend fun collect(gatewayEvent: GatewayEvent) {
-        process<GatewayConfigAware>(gatewayEvent) {
-            gatewayYamlConfig = it.config
+            is WebsocketEstablishedEvent -> processWebsocketEstablishedEvent(e)
         }
     }
 
-    override suspend fun collect(serviceEvent: ServiceEvent) {
-        process<WebSocketListening>(serviceEvent) {
-            subscriber.emit(
-                SubscribeApiEvent {
-                    when (it) {
-                        is WebsocketApiEvent ->
-                            when (it.packet) {
-                                is ApiInsightResponse -> processApiInsightResponse(it.packet)
-                                else -> Unit
-                            }
-
-                        is WebsocketEstablishedEvent -> processWebsocketEstablishedEvent(it)
-                    }
-                },
-            )
-        }
-    }
 
     private suspend fun processWebsocketEstablishedEvent(event: WebsocketEstablishedEvent) {
         with(event.session) {
@@ -65,7 +45,7 @@ class ApiInsightService(
     }
 
     private fun processApiInsightResponse(resp: ApiInsightResponse) {
-        emitter.emit(
+        gatewayEventEmitter.emit(
             RemoteServiceAware(
                 listOf(
                     RemoteService(

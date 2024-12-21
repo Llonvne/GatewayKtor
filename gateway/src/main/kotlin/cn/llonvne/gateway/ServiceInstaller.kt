@@ -68,8 +68,6 @@ class ServiceInstaller(
     }
 
     fun installService(service: Service) {
-        config.eventsCentral.collect(service::collect)
-
         val route =
             when (service) {
                 is GatewayService -> installGatewayService(service)
@@ -82,6 +80,16 @@ class ServiceInstaller(
     }
 
     fun installServices(services: List<Service>) {
+
+        services.forEach {
+            it.serviceEventEmitterAware {
+                config.eventsCentral.emit(it)
+            }
+            it.apiEventEmitterAware {
+                config.eventsCentral.emit(it)
+            }
+        }
+
         services.sortedBy { it.order }.forEach { installService(it) }
     }
 }

@@ -32,7 +32,8 @@ class ApiCallService(
 ) : GatewayService {
     override val name: String = "ApiCallService"
 
-    override suspend fun collect(gatewayEvent: GatewayEvent) =
+    override suspend fun collect(gatewayEvent: GatewayEvent) {
+        super.collect(gatewayEvent)
         process<ApiCallEvent>(gatewayEvent) { e ->
             val apiDescriptor = e.context.apiDescriptor
 
@@ -50,6 +51,7 @@ class ApiCallService(
 
             e.ok()
         }
+    }
 
     suspend fun requestTo(context: RemoteServiceContext): HttpResponse {
         val yamlConfig = context.config

@@ -2,10 +2,11 @@ package cn.llonvne.service.abc
 
 import cn.llonvne.gateway.Constants
 import cn.llonvne.gateway.event.GatewayEvent
+import cn.llonvne.gateway.type.Emitter
 import cn.llonvne.gateway.type.ServiceOrder
 import io.ktor.server.routing.Route
 
-interface GatewayService : Service {
+interface GatewayService : Service, GatewayEventEmitterAware {
     /**
      * 允许 GatewayService 处理 GatewayEvent。
      *
@@ -24,4 +25,6 @@ interface GatewayService : Service {
     override fun route(): Route.() -> Unit = {}
 
     override val isRemote: Boolean get() = false
+
+    override fun gatewayEventEmitterAware(emitter: Emitter<GatewayEvent>) {}
 }

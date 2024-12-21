@@ -1,13 +1,16 @@
 package cn.llonvne.service
 
 import cn.llonvne.gateway.ApiWebSocketPacket
+import cn.llonvne.gateway.event.ApiEvent
 import cn.llonvne.gateway.event.GatewayEvent
+import cn.llonvne.gateway.event.ServiceEvent
 import cn.llonvne.gateway.event.WebSocketInstalled
 import cn.llonvne.gateway.event.WebSocketListening
 import cn.llonvne.gateway.event.WebsocketApiEvent
 import cn.llonvne.gateway.event.WebsocketEstablishedEvent
 import cn.llonvne.gateway.type.Emitter
 import cn.llonvne.service.abc.GatewayService
+import cn.llonvne.service.abc.GatewayServiceBase
 import io.ktor.server.request.header
 import io.ktor.server.websocket.DefaultWebSocketServerSession
 import io.ktor.server.websocket.converter
@@ -19,16 +22,12 @@ import io.ktor.websocket.Frame
 import io.ktor.websocket.close
 import org.slf4j.LoggerFactory
 
-class ApiWebsocketService(
-    val emitter: Emitter<WebsocketApiEvent>,
-    val serviceEmitter: Emitter<WebSocketListening>,
-    val socketOpenEmitter: Emitter<WebsocketEstablishedEvent>,
-) : GatewayService {
+class ApiWebsocketService() : GatewayServiceBase() {
     override val name: String = "ApiWebsocketService"
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override suspend fun collect(gatewayEvent: GatewayEvent) =
+    override suspend fun collectGateway(gatewayEvent: GatewayEvent) =
         process<WebSocketInstalled>(gatewayEvent) {
             val root = it.webSocketRoot
 
@@ -43,7 +42,7 @@ class ApiWebsocketService(
                     return@webSocket
                 }
 
-                socketOpenEmitter.emit(WebsocketEstablishedEvent(serviceName, this@webSocket))
+                apiEventEmitter.emit(WebsocketEstablishedEvent(serviceName, this@webSocket))
 
                 logger.info("service $serviceName established a websocket . ")
 
@@ -55,7 +54,7 @@ class ApiWebsocketService(
                             if (resp != null) {
                                 resp as ApiWebSocketPacket
 
-                                emitter.emit(WebsocketApiEvent(resp))
+                                apiEventEmitter.emit(WebsocketApiEvent(resp))
                             }
                         }
 

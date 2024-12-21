@@ -3,13 +3,10 @@ package cn.llonvne.gateway.config
 import cn.llonvne.gateway.ApiWebSocketPacket
 import cn.llonvne.gateway.Ping
 import cn.llonvne.gateway.event.GatewayEventsCentral
-import cn.llonvne.service.AliveDetectService
 import cn.llonvne.service.ApiCallService
-import cn.llonvne.service.ApiDescriptorService
 import cn.llonvne.service.ApiInsightService
 import cn.llonvne.service.ApiRouteService
 import cn.llonvne.service.ApiWebsocketService
-import cn.llonvne.service.BootUpService
 import cn.llonvne.service.abc.GatewayService
 import cn.llonvne.service.abc.Service
 import io.ktor.client.HttpClient
@@ -104,15 +101,10 @@ class ApiGatewayConfig {
      */
     val baseServices =
         mutableListOf(
-            ApiRouteService { eventsCentral.emit(it) },
-            ApiInsightService({ eventsCentral.emit(it) }) { eventsCentral.emit(it) },
-            BootUpService { handler ->
-                eventsCentral.collect(handler)
-            },
+            ApiRouteService(),
+            ApiInsightService(),
             ApiCallService(),
-            ApiDescriptorService { eventsCentral.emit(it) },
-            ApiWebsocketService({ eventsCentral.emit(it) }, { eventsCentral.emit(it) }) { eventsCentral.emit(it) },
-            AliveDetectService(),
+            ApiWebsocketService()
         )
 
     /**
