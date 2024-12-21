@@ -11,3 +11,11 @@ class Ping(
     val from: String,
     val time: Long = Instant.now().toEpochMilli(),
 ) : ApiWebSocketPacket
+
+@Serializable
+class ApiInsightRequest : ApiWebSocketPacket
+
+@Serializable
+class ApiInsightResponse(
+    val serviceInsight: ServiceInsight,
+) : ApiWebSocketPacket

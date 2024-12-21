@@ -12,6 +12,9 @@ application {
 }
 
 dependencies {
+    // LOG
+    implementation("ch.qos.logback:logback-classic:1.4.14")
+
     // PROJECT
     implementation(project(":gateway-api"))
 
@@ -22,6 +25,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json")
     implementation("io.ktor:ktor-client-websockets")
 
+    // SERVER
     implementation("io.ktor:ktor-server-websockets-jvm")
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-auth-jvm")
@@ -30,10 +34,9 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
     implementation("io.github.flaxoos:ktor-server-rate-limiting:2.1.1")
-
     implementation("io.ktor:ktor-server-netty-jvm")
-    implementation("ch.qos.logback:logback-classic:1.4.14")
     implementation("io.ktor:ktor-server-config-yaml-jvm")
+
     testImplementation("io.ktor:ktor-server-test-host-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:2.1.0")
 }

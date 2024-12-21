@@ -12,7 +12,7 @@ object Constants {
 
         val essentialServiceOrder = ServiceOrder(-100)
 
-        val persistenceServiceOrder = ServiceOrder(-50)
+        val bootUpServiceOrder = ServiceOrder(-75)
     }
 
     object AttributeKeys {

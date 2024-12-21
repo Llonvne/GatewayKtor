@@ -79,7 +79,7 @@ class ApiGatewayConfig {
                     val context = req.attributes.getOrNull(serviceYamlConfigAttributeKey) ?: return@modifyRequest
                     LoggerFactory.getLogger(this@modifyRequest::class.java).warn(
                         "Unable to fetch insight for the service '${context.name}' from '${context.url + context.insightUri}'. " +
-                            "Reason: ${this.cause?.localizedMessage}. A retry will be attempted shortly.",
+                                "Reason: ${this.cause?.localizedMessage}. A retry will be attempted shortly.",
                     )
                 }
             }
@@ -105,17 +105,13 @@ class ApiGatewayConfig {
     val baseServices =
         mutableListOf(
             ApiRouteService { eventsCentral.emit(it) },
-            ApiInsightService(apiInsightHttpClient, serviceYamlConfigAttributeKey) { eventsCentral.emit(it) },
+            ApiInsightService({ eventsCentral.emit(it) }) { eventsCentral.emit(it) },
             BootUpService { handler ->
                 eventsCentral.collect(handler)
             },
             ApiCallService(),
             ApiDescriptorService { eventsCentral.emit(it) },
-            ApiWebsocketService({
-                eventsCentral.emit(it)
-            }, {
-                eventsCentral.emit(it)
-            }),
+            ApiWebsocketService({ eventsCentral.emit(it) }, { eventsCentral.emit(it) }) { eventsCentral.emit(it) },
             AliveDetectService(),
         )
 
