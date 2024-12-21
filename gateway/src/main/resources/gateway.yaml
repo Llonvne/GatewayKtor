@@ -3,6 +3,8 @@ services:
     url: "http://localhost:8081"
     essential: false
     insightUri: "/api"
+  - name: Persistence
+    url: "http://localhost:8082"
 routes:
   - from: "TestService"
     to: "TestService"

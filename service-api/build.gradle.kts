@@ -9,12 +9,18 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.4.14")
 
     // PROJECT
-    implementation(project(":gateway-api"))
+    api(project(":gateway-api"))
 
     // KTOR CLIENT
-    implementation("io.ktor:ktor-client-core")
-    implementation("io.ktor:ktor-client-cio")
-    implementation("io.ktor:ktor-client-content-negotiation")
-    implementation("io.ktor:ktor-serialization-kotlinx-json")
-    implementation("io.ktor:ktor-client-websockets")
+    api("io.ktor:ktor-client-core")
+    api("io.ktor:ktor-client-cio")
+    api("io.ktor:ktor-client-content-negotiation")
+    api("io.ktor:ktor-serialization-kotlinx-json")
+    api("io.ktor:ktor-client-websockets")
+
+    // KTOR SERVER
+    api("io.ktor:ktor-server-core-jvm")
+    api("io.ktor:ktor-server-content-negotiation-jvm")
+    api("io.ktor:ktor-serialization-kotlinx-json-jvm")
+    api("io.ktor:ktor-server-netty-jvm")
 }

@@ -5,6 +5,10 @@ plugins {
 }
 
 dependencies {
+
+    // PROJECT
+    implementation(project(":service-api"))
+
     val hibernateVersion = "7.0.0.Beta3"
     val agroalVersion = "2.1"
     val log4jVersion = "2.24.1"

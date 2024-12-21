@@ -2,6 +2,7 @@ package cn.llonvne.service
 
 import cn.llonvne.gateway.ApiWebSocketPacket
 import cn.llonvne.gateway.event.GatewayEvent
+import cn.llonvne.gateway.event.UninstallRemoteService
 import cn.llonvne.gateway.event.WebSocketInstalled
 import cn.llonvne.gateway.event.WebSocketListening
 import cn.llonvne.gateway.event.WebsocketApiEvent
@@ -13,9 +14,8 @@ import io.ktor.server.websocket.converter
 import io.ktor.server.websocket.sendSerialized
 import io.ktor.server.websocket.webSocket
 import io.ktor.util.reflect.typeInfo
-import io.ktor.websocket.CloseReason
 import io.ktor.websocket.Frame
-import io.ktor.websocket.close
+import io.ktor.websocket.closeExceptionally
 import org.slf4j.LoggerFactory
 
 class ApiWebsocketService : GatewayServiceBase() {
@@ -27,6 +27,7 @@ class ApiWebsocketService : GatewayServiceBase() {
 
     override suspend fun collectGateway(gatewayEvent: GatewayEvent) =
         process<WebSocketInstalled>(gatewayEvent) {
+
             val root = it.webSocketRoot
 
             root.webSocket(gatewayYamlConfig.serviceWebsocketEndpoint) {
@@ -34,11 +35,7 @@ class ApiWebsocketService : GatewayServiceBase() {
                 if (serviceName == null ||
                     serviceName !in servicesNameSet
                 ) {
-                    close(
-                        CloseReason(CloseReason.Codes.CANNOT_ACCEPT, "Service name not register in config."),
-                    )
-
-                    logger.warn("service $serviceName not register in config.")
+                    closeExceptionally(RuntimeException())
                     return@webSocket
                 }
 
@@ -63,6 +60,7 @@ class ApiWebsocketService : GatewayServiceBase() {
                 }
 
                 logger.info("Service $serviceName closed.")
+                gatewayEventEmitter.emit(UninstallRemoteService(serviceName))
             }
 
             serviceEmitter.emit(WebSocketListening())
