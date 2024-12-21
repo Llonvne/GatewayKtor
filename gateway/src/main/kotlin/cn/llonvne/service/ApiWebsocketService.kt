@@ -1,15 +1,11 @@
 package cn.llonvne.service
 
 import cn.llonvne.gateway.ApiWebSocketPacket
-import cn.llonvne.gateway.event.ApiEvent
 import cn.llonvne.gateway.event.GatewayEvent
-import cn.llonvne.gateway.event.ServiceEvent
 import cn.llonvne.gateway.event.WebSocketInstalled
 import cn.llonvne.gateway.event.WebSocketListening
 import cn.llonvne.gateway.event.WebsocketApiEvent
 import cn.llonvne.gateway.event.WebsocketEstablishedEvent
-import cn.llonvne.gateway.type.Emitter
-import cn.llonvne.service.abc.GatewayService
 import cn.llonvne.service.abc.GatewayServiceBase
 import io.ktor.server.request.header
 import io.ktor.server.websocket.DefaultWebSocketServerSession
@@ -27,13 +23,17 @@ class ApiWebsocketService() : GatewayServiceBase() {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
+    private val servicesNameSet = gatewayYamlConfig.services.map { it.name }.toSet()
+
     override suspend fun collectGateway(gatewayEvent: GatewayEvent) =
         process<WebSocketInstalled>(gatewayEvent) {
             val root = it.webSocketRoot
 
-            root.webSocket("/api") {
-                val serviceName = call.request.header("service_name")
-                if (serviceName == null) {
+            root.webSocket(gatewayYamlConfig.serviceWebsocketEndpoint) {
+                val serviceName = call.request.header(gatewayYamlConfig.serviceNameHeader)
+                if (serviceName == null ||
+                    serviceName !in servicesNameSet
+                ) {
                     close(
                         CloseReason(CloseReason.Codes.CANNOT_ACCEPT, "Service name not register in config."),
                     )

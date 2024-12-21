@@ -8,7 +8,7 @@ import cn.llonvne.gateway.HttpMethod.PATCH
 import cn.llonvne.gateway.HttpMethod.POST
 import cn.llonvne.gateway.event.ApiCallEvent
 import cn.llonvne.gateway.event.GatewayEvent
-import cn.llonvne.service.abc.GatewayService
+import cn.llonvne.service.abc.GatewayServiceBase
 import cn.llonvne.service.type.RemoteServiceContext
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
@@ -29,11 +29,10 @@ class ApiCallService(
                 json(Json)
             }
         },
-) : GatewayService {
+) : GatewayServiceBase() {
     override val name: String = "ApiCallService"
 
-    override suspend fun collect(gatewayEvent: GatewayEvent) {
-        super.collect(gatewayEvent)
+    override suspend fun collectGateway(gatewayEvent: GatewayEvent) {
         process<ApiCallEvent>(gatewayEvent) { e ->
             val apiDescriptor = e.context.apiDescriptor
 
@@ -53,7 +52,7 @@ class ApiCallService(
         }
     }
 
-    suspend fun requestTo(context: RemoteServiceContext): HttpResponse {
+    private suspend fun requestTo(context: RemoteServiceContext): HttpResponse {
         val yamlConfig = context.config
         val service = context.insight
         val api = context.apiDescriptor

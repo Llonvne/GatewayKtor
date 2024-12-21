@@ -4,6 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GatewayYamlConfig(
+    val serviceWebsocketEndpoint: String = "/api",
+    val serviceNameHeader: String = "service_name",
     val services: List<GatewayServiceYamlConfig> = emptyList(),
     val routes: List<ApiRouteConfig> = emptyList(),
     val persistence: GatewayPersistentConfig,
