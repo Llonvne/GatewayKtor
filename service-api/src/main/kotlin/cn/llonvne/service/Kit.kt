@@ -19,6 +19,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.util.reflect.typeInfo
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
@@ -47,6 +48,7 @@ private class KitImpl(
 ) : Kit {
     private val logger = LoggerFactory.getLogger("Kit at $gatewayHost")
 
+    @OptIn(ExperimentalSerializationApi::class)
     private val jsonPrinter = Json {
         encodeDefaults = true
         prettyPrint = true
